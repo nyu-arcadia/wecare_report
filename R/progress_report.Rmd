@@ -1,0 +1,10 @@
+---
+title: "WeCare Progress Report"
+author: "Michael Wu"
+date: "`r Sys.time()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
