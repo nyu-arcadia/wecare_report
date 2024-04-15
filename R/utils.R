@@ -19,6 +19,8 @@ get_week_range <- function(dates) {
 calculate_week_number <- function(dates,
                                   project_start_date = "2024-04-08") {
   
+  dates <- gsub("(.*)( ~ )(.*)", "\\1", dates)
+  
   # Calculate the difference in days from the project start date
   days_difference <- as.Date(dates) - as.Date(project_start_date)
   
@@ -26,4 +28,14 @@ calculate_week_number <- function(dates,
   week_number <- as.integer(days_difference) %/% 7 + 1
   
   return(week_number)
+}
+
+# Function to transform columns based on their prefix and total column
+transform_columns <- function(df, prefix, total_col) {
+  df %>%
+    mutate(across(
+      starts_with(prefix),
+      ~ ifelse(is.na(.x), NA, paste0(.x, " (", round((.x / .data[[total_col]]) * 100, 2), "%)")),
+      .names = "{.col}"
+    ))
 }
