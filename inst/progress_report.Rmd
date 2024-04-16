@@ -107,4 +107,20 @@ ft_demo
 ft_recruitment
 ```
 
+\newpage
+
+<!---BLOCK_LANDSCAPE_STOP--->
+
+```{r monthly_enrollment, tab.cap="Enrollment Table: Projected vs. Actual by Time (Cumulative over Time)", tab.id = "monthly_enrollment"}
+ft_monthly_enrollment
+```
+
+\newpage
+
+<!---BLOCK_LANDSCAPE_START--->
+
+```{r p_monthly_enrollment, fig.cap="Enrollment Graph: Projected vs. Actual by Time (Cumulative over Time)", fig.id = "p_monthly_enrollment", fig.width=10, fig.height=5, fig.dpi=300}
+p_monthly_enrollment
+```
+
 <!---BLOCK_LANDSCAPE_STOP--->

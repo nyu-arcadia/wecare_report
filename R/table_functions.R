@@ -513,3 +513,109 @@ ft_recruitment <- flextable(t_recruitment) |>
   bold(i = c(1, 2, 11, 16), bold = TRUE, part = "body") |> 
   italic(i = 26, italic = TRUE, part = "body") |> 
   merge_h(i = 1)
+
+
+# -------- Table 7: Enrollment Table: Projected vs. Actual by Time (cumulative over time) --------
+
+t_monthly_enrollment_actual <- dat |>
+  mutate(date_of_enrollment_all = coalesce(p_date_of_enrollment, date_of_enrollment, screen_doe)) |>
+  mutate(month_year_of_enrollment = format(date_of_enrollment_all, "%m/%Y"))
+
+t_monthly_enrollment_actual <- t_monthly_enrollment_actual |> 
+  # Ensure grouping is done by both site_id and the new age_group column
+  group_by(site_id, month_year_of_enrollment) |>
+  # Use summarise() to compute summaries specific to each group
+  summarize(
+    n_consented = sum((age_group == "12-17" & p_informed_consent_form_parent_complete == 2) | 
+                        (age_group == "18+" & informed_consent_form_youth_complete == 2), na.rm = TRUE),
+    .groups = 'drop'  # Drop the grouping once summarization is done
+  ) |> 
+  # Ensure all combinations of site_id and age_group appear in the results
+  complete(site_id = c("Harlem", "Kings County"), 
+           month_year_of_enrollment = na.omit(unique(t_monthly_enrollment_actual$month_year_of_enrollment)),
+           fill = list(
+             n_consented = 0
+           )) |> 
+  pivot_wider(names_from = site_id, values_from = n_consented) |> 
+  mutate(actual_enrollment = sum(c_across(c(Harlem, `Kings County`)), na.rm = T),
+         .after = month_year_of_enrollment)
+
+# Create target enrollment table
+
+# Starting value
+initial_value <- 40
+# Create an empty data frame
+t_monthly_enrollment_target <- data.frame(month_year_of_enrollment = as.Date(character()), 
+                                          target_enrollment = numeric())
+# Increment value
+increment <- 45
+
+# Current sum and the current increment count
+current_sum <- initial_value
+current_date <- as.Date("2024-04-01")
+
+# Fill the data frame until the sum reaches or exceeds 2200
+while (current_sum <= 2200) {
+  t_monthly_enrollment_target <- rbind(t_monthly_enrollment_target, data.frame(month_year_of_enrollment = current_date, target_enrollment = current_sum))
+  current_date <- seq(current_date, by = "1 month", length.out = 2)[2]
+  current_sum <- current_sum + increment
+}
+
+t_monthly_enrollment_target <- t_monthly_enrollment_target |> 
+  mutate(month_year_of_enrollment = format(month_year_of_enrollment, "%m/%Y"))
+
+# Combine target and actual tables
+t_monthly_enrollment <- t_monthly_enrollment_target |> 
+  left_join(t_monthly_enrollment_actual, by = "month_year_of_enrollment") |> 
+  mutate_all(~ifelse(is.na(.), 0, .))
+
+ft_monthly_enrollment <- t_monthly_enrollment
+
+ft_monthly_enrollment <- ft_monthly_enrollment |> 
+  add_row(month_year_of_enrollment = "YEAR 1 (in grant cycle)", .before = 1) |> 
+  add_row(month_year_of_enrollment = "YEAR 2 (in grant cycle)", .after = 10) |> 
+  add_row(month_year_of_enrollment = "YEAR 3 (in grant cycle)", .after = 23) |> 
+  add_row(month_year_of_enrollment = "YEAR 4 (in grant cycle)", .after = 36) |> 
+  add_row(month_year_of_enrollment = "YEAR 5 (in grant cycle)", .after = 49)
+
+# Rename
+names(ft_monthly_enrollment) <- c("Monthly Projection", "Total Target", "Total Actual",
+                                 "Harlem Actual", "Kings County Actual")
+
+# Create flextable
+ft_monthly_enrollment <- flextable(ft_monthly_enrollment) |> 
+  width(width = 1) |>
+  width(j = 1, width = 2) |>
+  align(j = 1:5, align = "center", part = "body") |> 
+  align(j = 1:5, align = "center", part = "header") |> 
+  bold(i = 1, bold = TRUE, part = "header") |> 
+  bold(i = c(1, 11, 24, 37, 50), bold = TRUE, part = "body") |> 
+  hline(i = c(10, 23, 36, 49) , part = "body")
+
+
+# -------- Figure 1: Enrollment Graph: Projected vs. Actual by Time (cumulative over time) --------
+
+f_monthly_enrollment <- t_monthly_enrollment |>
+  select(month_year_of_enrollment, target_enrollment, actual_enrollment) |> 
+  pivot_longer(
+    cols = c(target_enrollment, actual_enrollment),
+    names_to = "type", 
+    values_to = "total")
+
+f_monthly_enrollment <- f_monthly_enrollment |> 
+  mutate(month_year_of_enrollment = factor(month_year_of_enrollment, levels = (unique(f_monthly_enrollment$month_year_of_enrollment)))) |> 
+  mutate(type = if_else(type == "target_enrollment", "Trial Projected", "Trial Actual"))
+  
+  
+p_monthly_enrollment <- ggplot(f_monthly_enrollment, 
+                               aes(x = month_year_of_enrollment, 
+                                   y = total, 
+                                   color = type,
+                                   group = type)) +
+  geom_point() +
+  geom_line() + 
+  labs(x = "Month & Year", y = "Number of Youth Enrolled in WeCare",
+       color = "") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1))
+
