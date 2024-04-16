@@ -1,0 +1,110 @@
+---
+title: "WeCare Progress Report"
+author: "Michael Wu"
+date: "`r Sys.Date()`"
+output: 
+  officedown::rdocx_document:
+    mapstyles:
+      Normal: ['First Paragraph']
+    reference_docx: word_template.docx
+---
+
+```{r setup, include=FALSE}
+# knitr global settings
+knitr::opts_chunk$set(
+  echo = FALSE, 
+  fig.cap = TRUE,
+  warning = FALSE, 
+  cache = FALSE,
+  message = FALSE,
+  error = T,
+  results="asis",
+  tab.cap.style = "Table Caption",
+  tab.cap.pre = "Table ",
+  tab.cap.sep = ": ",
+  fig.cap.style = "Image Caption",
+  fig.cap.pre = "Figure ",
+  fig.cap.sep = ": ")
+
+options(yaml.eval.expr = TRUE)
+
+source(here::here("R/utils.R"))
+source(here::here("R/load_data.R"))
+source(here::here("R/table_functions.R"))
+library(officer)
+```
+
+```{r, include = F}
+# vertical and horizontal page margin set up
+ps <- officer::prop_section(
+  page_margins = officer::page_mar(
+    bottom = 1,
+    top = 1,
+    right = 1,
+    left = 1,
+    header = 0.5,
+    footer = 0.5,
+    gutter = 0),
+  type = "continuous"
+)
+```
+
+`r officer::block_section(ps)`
+\newpage
+
+## Table of content
+
+<!---BLOCK_TOC--->
+
+## List of figures
+
+<!---BLOCK_TOC{seq_id: 'fig'}--->
+
+## List of tables
+
+<!---BLOCK_TOC{seq_id: 'tab'}--->
+
+`r officer::block_section(ps)`
+\newpage
+
+<!---BLOCK_LANDSCAPE_START--->
+
+```{r enrollment, tab.cap="Summary of Enrollment", tab.id = "enrollment"}
+ft_enrollment
+```
+
+\newpage
+
+```{r weekly_enrollment, tab.cap="Number of Participants Enrolled during Each One-Week Recruitment Period", tab.id = "weekly_enrollment"}
+ft_weekly_enrollment
+```
+
+\newpage
+
+```{r assignment, tab.cap="Treatment/Control Group Assignment", tab.id = "assignment"}
+ft_assignment
+```
+
+\newpage
+
+<!---BLOCK_LANDSCAPE_STOP--->
+
+```{r trigger_cfs, tab.cap="Triggered Safety Plan During Baseline", tab.id = "trigger_cfs"}
+ft_trigger_cfs
+```
+
+\newpage
+
+<!---BLOCK_LANDSCAPE_START--->
+
+```{r demo, tab.cap="Demographics of Enrolled Subjects (DSMB Chart)", tab.id = "demo"}
+ft_demo
+```
+
+\newpage
+
+```{r recruitment, tab.cap="Detailed Recruitment Information", tab.id = "demo"}
+ft_recruitment
+```
+
+<!---BLOCK_LANDSCAPE_STOP--->
