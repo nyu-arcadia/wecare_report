@@ -32,6 +32,7 @@ source(here::here("R/utils.R"))
 source(here::here("R/load_data.R"))
 source(here::here("R/table_functions.R"))
 library(officer)
+library(officedown)
 ```
 
 ```{r, include = F}

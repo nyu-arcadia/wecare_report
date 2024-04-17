@@ -1,5 +1,8 @@
 library(tidyverse)
 library(flextable)
+source(here::here("R/utils.R"))
+source(here::here("R/load_data.R"))
+
 # Functions to generate tables and figures
 
 # -------- Table 1: Summary of Enrollment --------
