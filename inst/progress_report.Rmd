@@ -76,13 +76,19 @@ ft_enrollment
 
 \newpage
 
-```{r weekly_enrollment, tab.cap="Number of Participants Enrolled during Each One-Week Recruitment Period", tab.id = "weekly_enrollment"}
+```{r weekly_enrollment, tab.cap="Number of Youths Enrolled during Each One-Week Recruitment Period", tab.id = "weekly_enrollment"}
 ft_weekly_enrollment
 ```
 
 \newpage
 
-```{r assignment, tab.cap="Treatment/Control Group Assignment", tab.id = "assignment"}
+```{r recruitment, tab.cap="Detailed Recruitment Information", tab.id = "demo"}
+ft_recruitment
+```
+
+\newpage
+
+```{r assignment, tab.cap="Treatment/Control Group Assignment among Enrolled Youths", tab.id = "assignment"}
 ft_assignment
 ```
 
@@ -90,7 +96,7 @@ ft_assignment
 
 <!---BLOCK_LANDSCAPE_STOP--->
 
-```{r trigger_cfs, tab.cap="Triggered Safety Plan During Baseline", tab.id = "trigger_cfs"}
+```{r trigger_rmp, tab.cap="Triggered Risk Management Protocol during Baseline", tab.id = "trigger_rmp"}
 ft_trigger_cfs
 ```
 
@@ -100,12 +106,6 @@ ft_trigger_cfs
 
 ```{r demo, tab.cap="Demographics of Enrolled Subjects (DSMB Chart)", tab.id = "demo"}
 ft_demo
-```
-
-\newpage
-
-```{r recruitment, tab.cap="Detailed Recruitment Information", tab.id = "demo"}
-ft_recruitment
 ```
 
 \newpage
